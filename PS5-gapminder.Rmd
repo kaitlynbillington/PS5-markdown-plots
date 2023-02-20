@@ -41,11 +41,12 @@ gapminder %>%
 
 2. If you did this correctly, you saw that there are more names than iso-2 codes, and there are
 even more iso3 -codes. What is going on? Can you find it out?
-    _This doesn't seem accurate. I saw a note in the discord saying this question had a mistake_
+
+_This doesn't seem accurate. I saw a note in the discord saying this question had a mistake_
 (a) (5pt) Find how many names are there for each iso-2 code. Are there any iso-2 codes that
 correspond to more than one name? What are these countries?
-_Note:_ Here I'm comparing just _iso2_ and _name_
-```{r}
+_Note:_ Here I'm comparing just **_iso2_** and _name_
+```{r, message=FALSE}
 gapminder %>% 
   group_by(iso2, name) %>% 
   filter(!is.na(iso2)) %>% 
@@ -59,7 +60,7 @@ This table shows the name and its correlated iso2-code, as well as the number of
 more than one iso3-code? What are these countries?
 Hint: two of these entities are CHANISL and NLD CURACAO.
 _Note:_ this one compares **_iso3_** and _name_
-```{r}
+```{r, message=FALSE}
 gapminder %>% 
   group_by(iso3, name) %>% 
   summarize(n_distinct(name), n()) %>% 
@@ -67,7 +68,10 @@ gapminder %>%
 ```
 ```{r}
 gapminder %>% 
-  summarize(sum(is.na(name)))
+  filter(is.na(name)) %>% 
+  group_by(name) %>% 
+  filter(is.na(iso2)) %>% 
+  distinct(iso3)
 ```
 
 
@@ -100,28 +104,82 @@ Next, let’s analyze CO2 emissions.
 1. (2pt) How many missing co2 emissions are there for each year? Analyze both missing CO2
 and co2_PC. Which years have most missing data?
 
+_Note:_ co2_PC is CO2 per capita
 
-2. (5pt) Make a plot of total CO2 emissions over time for the U.S, China, and India. Add a few
-more countries of your choice. Explain what do you see.
-
-
-3. (5pt) Now let’s analyze the CO2 emissions per capita (co2_PC ). Make a similar plot of the
-same countries. What does this figure suggest?
-
-
-4. (6pt) Compute average CO2 emissions per capita across the continents (assume region is the
-same as continent). Comment what do you see.
-Note: just compute averages over countries and ignore the fact that countries are of different
-size.
-Hint: Americas 2016 should be 4.80.
+```{r}
+gapminder %>% 
+  group_by(time) %>% 
+  summarize(sum(is.na(co2)), sum(is.na(co2_PC)))
+```
 
 
-5. (7pt) Make a barplot where you show the previous results–average CO2 emissions per capita
-across continents in 1960 and 2016.
+2. (5pt) Make a plot of total CO2 emissions over time for the U.S, China, and India. Add a few more countries of your choice. Explain what do you see.
 
-6. Which countries are the three largest, and three smallest CO2 emitters (in terms of CO2 per
-capita) in 2019 for each continent? (Assume region is continent).
+_Note:_ I need to calculate top 3 co2 emitting countries (top 5 to add a few more)
+```{r}
+gapminder %>% 
+  filter(!is.na(co2)) %>% 
+  arrange(desc(co2)) %>% 
+  head(5)
+```
+### This isn't it. fix it. idk how to plot evidently. i swear i'm trying
 
+
+3. (5pt) Now let’s analyze the CO2 emissions per capita (co2_PC ). Make a similar plot of then same countries. What does this figure suggest?
+
+
+4. (6pt) Compute average CO2 emissions per capita across the continents (assume region is the same as continent). Comment what do you see.
+Note: just compute averages over countries and ignore the fact that countries are of different size. Hint: Americas 2016 should be 4.80.
+```{r}
+gapminder %>% 
+  group_by(region) %>% 
+  filter(!is.na(co2_PC)) %>% 
+  summarize(mean(co2_PC))
+```
+
+
+5. (7pt) Make a barplot where you show the previous results–average CO2 emissions per capita across continents in 1960 and 2016.
+```{r}
+co2pc_1960 <- gapminder %>%
+  filter(time==1960) %>% 
+  group_by(region) %>% 
+  filter(!is.na(co2_PC)) %>% 
+  summarize(mean(co2_PC))
+```
+```{r}
+co2pc_2016 <- gapminder %>%
+  filter(time==2016) %>% 
+  group_by(region) %>% 
+  filter(!is.na(co2_PC)) %>% 
+  summarize(mean(co2_PC))
+```
+
+fix```{r}
+ggplot(co2pc_2016) +
+  geom_col(x=region, y=co2pc_2016)
+this```
+
+### This isn't it. Fix it.
+
+6. Which countries are the three largest, and three smallest CO2 emitters (in terms of CO2 per capita) in 2019 for each continent? (Assume region is continent).
+```{r}
+gapminder %>%
+  select(time, region, name, co2_PC) %>%
+  filter(time== 2016, !is.na(region)) %>%
+  arrange(desc(co2_PC)) %>% 
+  head(3)
+```
+
+```{r}
+gapminder %>%
+  select(time, region, name, co2_PC) %>%
+  filter(time== 2016, !is.na(co2_PC)) %>%
+  arrange(desc(co2_PC)) %>% 
+  tail(3)
+```
+
+- Top 3 are Qatar, Unknown, and Trinidad and Tobego
+- Bottom 3 are Burundi, Somalia, and Democratic Republic of the Congo
 
 # GDP per capita (50pt)
 
@@ -154,19 +212,16 @@ using lag(), otherwise your results will be messed up! See https://faculty.washi
 edu/otoomet/info201-book/dplyr.html#dplyr-helpers-compute.
 
 
-6. (6pt) Show the histogram of GDP per capita for years of 1960 and 2019. Try to put both
-histograms on the same graph, see how well you can do it!
+6. (6pt) Show the histogram of GDP per capita for years of 1960 and 2019. Try to put both histograms on the same graph, see how well you can do it!
 
 
-7. (6pt) What was the ranking of US in terms of life expectancy in 1960 and in 2019? (When
-counting from top.)
+7. (6pt) What was the ranking of US in terms of life expectancy in 1960 and in 2019? (When counting from top.)
 Hint: check out the function rank()!
 Hint2: 17 for 1960.
 
 
-8. (6pt) If you did this correctly, then you noticed that US ranking has been falling quite a
-bit. But we also have more countries in 2019–what about the relative rank divided by the
-corresponding number of countries that have LE data in the corresponding year?
+8. (6pt) If you did this correctly, then you noticed that US ranking has been falling quite a bit. But we also have more countries in 2019–what about the relative rank divided by the corresponding number of countries that have LE data in the corresponding year?
 Hint: 0.0904 for 1960.
+
 Finally tell us how many hours did you spend on this PS.
 

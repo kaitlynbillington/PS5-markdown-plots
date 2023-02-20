@@ -373,39 +373,42 @@ dim(gapminder)</code></pre>
 </ol>
 <pre class="r"><code>gapminder %&gt;% 
   sample_n(5)</code></pre>
-<pre><code>##   iso3         name iso2   region                      sub.region
-## 1  BFA Burkina Faso   BF   Africa              Sub-Saharan Africa
-## 2  SVN     Slovenia   SI   Europe                 Southern Europe
-## 3  MLI         Mali   ML   Africa              Sub-Saharan Africa
-## 4  JOR       Jordan   JO     Asia                    Western Asia
-## 5  MEX       Mexico   MX Americas Latin America and the Caribbean
+<pre><code>##   iso3                name iso2   region                      sub.region
+## 1  DNK             Denmark   DK   Europe                 Northern Europe
+## 2  POL              Poland   PL   Europe                  Eastern Europe
+## 3  ATG Antigua and Barbuda   AG Americas Latin America and the Caribbean
+## 4  IRQ                Iraq   IQ     Asia                    Western Asia
+## 5  EST             Estonia   EE   Europe                 Northern Europe
 ##   intermediate.region time totalPopulation fertilityRate lifeExpectancy
-## 1      Western Africa 1963         5027821         6.377       35.84700
-## 2                     2018         2073894         1.610       81.37805
-## 3      Western Africa 2005        12775516         6.794       52.05700
-## 4                     1998         4943975         4.264       71.38600
-## 5     Central America 2013       118827161         2.270       74.93000
-##   childMortality youthFemaleLiteracy youthMaleLiteracy adultLiteracy     GDP_PC
-## 1          331.6                  NA                NA            NA   281.4169
-## 2            2.2                  NA                NA            NA 26760.4835
-## 3          156.3                  NA                NA            NA   667.9420
-## 4           28.4                  NA                NA            NA  2775.0820
-## 5           17.3            98.60191          98.52684      93.96285  9693.7230
+## 1                     2001         5358783         1.740       76.79268
+## 2                     2005        38165445         1.240       74.99512
+## 3           Caribbean 2011           89253         1.989       75.95600
+## 4                     1972        10599668         7.234       59.48400
+## 5                     2012         1322696         1.560       76.32683
+##   childMortality youthFemaleLiteracy youthMaleLiteracy adultLiteracy    GDP_PC
+## 1            5.6                  NA                NA            NA 56108.959
+## 2            7.6                  NA                NA            NA  9954.042
+## 3            9.5                  NA                NA         98.95 12618.079
+## 4          103.3                  NA                NA            NA  1498.807
+## 5            3.9                  NA                NA            NA 16497.209
 ##   accessElectricity agriculturalLand agricultureTractors cerealProduction
-## 1                NA            81590                  34           918153
-## 2         100.00000             6120                  NA           600948
-## 3          18.31556           403920                 743          3398743
-## 4          98.47843            10660                4800            75791
-## 5          99.23203          1015860                  NA         33210301
-##   fertilizerHa        co2 greenhouseGases  co2_PC pm2.5_35 battleDeaths
-## 1      0.03591     88.008              NA 0.01750       NA           NA
-## 2    261.75597         NA              NA      NA       NA           NA
-## 3     14.92482    916.750        87079.09 0.07176 47.19545           12
-## 4    123.32105  14543.322        17159.42 2.94163       NA           NA
-## 5    111.67868 490340.239              NA 4.12650  7.85148           NA</code></pre>
+## 1         100.00000            26760              121255          9423086
+## 2         100.00000           159060             1437183         26927924
+## 3          94.55201               90                  NA               72
+## 4                NA            91600               17000          3901326
+## 5         100.00000             9559                  NA           991200
+##   fertilizerHa       co2 greenhouseGases   co2_PC pm2.5_35 battleDeaths
+## 1     134.6719  52918.48      70080.0830  9.87509       NA           NA
+## 2     161.9389 302538.50     411811.6741  7.92703 11.49215           NA
+## 3       3.2500    513.38        537.8058  5.75196  0.00000           NA
+## 4       4.5340  29552.35      56661.6978  2.78805       NA           NA
+## 5      81.0701  17146.89      23292.7792 12.96359  0.00000           NA</code></pre>
 <p>There are many blanks/NAs, but this makes sense with the information
 being considered. The data frame itself looks good and is properly
-formatted.</p>
+formatted.In the knitted version it appears more difficult to read,
+however that seems to be due to the number of vectors and limits on page
+size. All of the information is still included in the way it should
+be.</p>
 </div>
 <div id="descriptive-statistics-15pt" class="section level1">
 <h1>Descriptive statistics (15pt)</h1>
@@ -424,21 +427,18 @@ gapminder %&gt;%
 <ol start="2" style="list-style-type: decimal">
 <li>If you did this correctly, you saw that there are more names than
 iso-2 codes, and there are even more iso3 -codes. What is going on? Can
-you find it out? <em>This doesn’t seem accurate. I saw a note in the
-discord saying this question had a mistake</em></li>
+you find it out?</li>
 </ol>
-<ol style="list-style-type: lower-alpha">
-<li>(5pt) Find how many names are there for each iso-2 code. Are there
-any iso-2 codes that correspond to more than one name? What are these
-countries? <em>Note:</em> Here I’m comparing just <em>iso2</em> and
-<em>name</em></li>
-</ol>
+<p><em>This doesn’t seem accurate. I saw a note in the discord saying
+this question had a mistake</em> (a) (5pt) Find how many names are there
+for each iso-2 code. Are there any iso-2 codes that correspond to more
+than one name? What are these countries? <em>Note:</em> Here I’m
+comparing just <strong><em>iso2</em></strong> and <em>name</em></p>
 <pre class="r"><code>gapminder %&gt;% 
   group_by(iso2, name) %&gt;% 
+  filter(!is.na(iso2)) %&gt;% 
   summarize(n_distinct(name), n()) %&gt;% 
   arrange(desc(n()))</code></pre>
-<pre><code>## `summarise()` has grouped output by &#39;iso2&#39;. You can override using the
-## `.groups` argument.</code></pre>
 <pre><code>## # A tibble: 250 × 4
 ## # Groups:   iso2 [249]
 ##    iso2  name                   `n_distinct(name)` `n()`
@@ -462,36 +462,200 @@ and it occurs 60 times within the data frame.</p>
 <ol start="2" style="list-style-type: lower-alpha">
 <li>(5pt) Now repeat the same for name and iso3-code. Are there country
 names that have more than one iso3-code? What are these countries? Hint:
-two of these entities are CHANISL and NLD CURACAO.</li>
+two of these entities are CHANISL and NLD CURACAO. <em>Note:</em> this
+one compares <strong><em>iso3</em></strong> and <em>name</em></li>
 </ol>
+<pre class="r"><code>gapminder %&gt;% 
+  group_by(iso3, name) %&gt;% 
+  summarize(n_distinct(name), n()) %&gt;% 
+  arrange(desc(n()))</code></pre>
+<pre><code>## # A tibble: 253 × 4
+## # Groups:   iso3 [253]
+##    iso3  name                 `n_distinct(name)` `n()`
+##    &lt;chr&gt; &lt;chr&gt;                             &lt;int&gt; &lt;int&gt;
+##  1 ABW   Aruba                                 1    60
+##  2 AFG   Afghanistan                           1    60
+##  3 AGO   Angola                                1    60
+##  4 AIA   Anguilla                              1     1
+##  5 ALA   Åland Islands                         1     1
+##  6 ALB   Albania                               1    60
+##  7 AND   Andorra                               1    60
+##  8 ARE   United Arab Emirates                  1    60
+##  9 ARG   Argentina                             1    60
+## 10 ARM   Armenia                               1    60
+## # … with 243 more rows</code></pre>
+<pre class="r"><code>gapminder %&gt;% 
+  filter(is.na(name)) %&gt;% 
+  group_by(name) %&gt;% 
+  filter(is.na(iso2)) %&gt;% 
+  distinct(iso3)</code></pre>
+<pre><code>## # A tibble: 0 × 2
+## # Groups:   name [0]
+## # … with 2 variables: name &lt;chr&gt;, iso3 &lt;chr&gt;</code></pre>
 <ol start="3" style="list-style-type: decimal">
 <li>(2pt) What is the minimum and maximum year in these data?</li>
 </ol>
+<p><em>Note:</em> in this data frame, year is shown in vector
+<em>time</em></p>
+<pre class="r"><code>#min year
+gapminder %&gt;% 
+  arrange(time) %&gt;% 
+  select(time) %&gt;% 
+  head(1)</code></pre>
+<pre><code>##   time
+## 1 1960</code></pre>
+<pre class="r"><code>#max year
+gapminder %&gt;% 
+  filter(!is.na(time)) %&gt;% 
+  arrange(time) %&gt;% 
+  select(time) %&gt;% 
+  tail(1)</code></pre>
+<pre><code>##       time
+## 13019 2019</code></pre>
+<p>In the data, the minimum year is 1960, and the maximum year is 2019.
+This means that the data frame includes information of years 1960
+through 2019.</p>
 </div>
 <div id="co2-emissions-30pt" class="section level1">
 <h1>CO2 emissions (30pt)</h1>
 <p>Next, let’s analyze CO2 emissions.</p>
 <ol style="list-style-type: decimal">
-<li><p>(2pt) How many missing co2 emissions are there for each year?
+<li>(2pt) How many missing co2 emissions are there for each year?
 Analyze both missing CO2 and co2_PC. Which years have most missing
-data?</p></li>
-<li><p>(5pt) Make a plot of total CO2 emissions over time for the U.S,
+data?</li>
+</ol>
+<p><em>Note:</em> co2_PC is CO2 per capita</p>
+<pre class="r"><code>gapminder %&gt;% 
+  group_by(time) %&gt;% 
+  summarize(sum(is.na(co2)), sum(is.na(co2_PC)))</code></pre>
+<pre><code>## # A tibble: 61 × 3
+##     time `sum(is.na(co2))` `sum(is.na(co2_PC))`
+##    &lt;int&gt;             &lt;int&gt;                &lt;int&gt;
+##  1  1960                60                   60
+##  2  1961                60                   60
+##  3  1962                58                   58
+##  4  1963                57                   57
+##  5  1964                51                   51
+##  6  1965                51                   51
+##  7  1966                51                   51
+##  8  1967                51                   51
+##  9  1968                51                   51
+## 10  1969                51                   51
+## # … with 51 more rows</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>(5pt) Make a plot of total CO2 emissions over time for the U.S,
 China, and India. Add a few more countries of your choice. Explain what
-do you see.</p></li>
+do you see.</li>
+</ol>
+<p><em>Note:</em> I need to calculate top 3 co2 emitting countries (top
+5 to add a few more)</p>
+<pre class="r"><code>gapminder %&gt;% 
+  filter(!is.na(co2)) %&gt;% 
+  arrange(desc(co2)) %&gt;% 
+  head(5)</code></pre>
+<pre><code>##   iso3  name iso2 region   sub.region intermediate.region time totalPopulation
+## 1  CHN China   CN   Asia Eastern Asia                     2014      1364270000
+## 2  CHN China   CN   Asia Eastern Asia                     2013      1357380000
+## 3  CHN China   CN   Asia Eastern Asia                     2015      1371220000
+## 4  CHN China   CN   Asia Eastern Asia                     2012      1350695000
+## 5  CHN China   CN   Asia Eastern Asia                     2016      1378665000
+##   fertilityRate lifeExpectancy childMortality youthFemaleLiteracy
+## 1         1.656         75.629           11.6                  NA
+## 2         1.647         75.321           12.5                  NA
+## 3         1.665         75.928           10.7                  NA
+## 4         1.639         75.013           13.5                  NA
+## 5         1.675         76.210            9.9                  NA
+##   youthMaleLiteracy adultLiteracy   GDP_PC accessElectricity agriculturalLand
+## 1                NA            NA 6103.748         100.00000          5286950
+## 2                NA            NA 5710.670          99.99701          5288015
+## 3                NA            NA 6500.418         100.00000          5286334
+## 4                NA            NA 5325.358          99.96487          5287995
+## 5                NA            NA 6908.109         100.00000          5285529
+##   agricultureTractors cerealProduction fertilizerHa      co2 greenhouseGases
+## 1                  NA        559325222     464.8276 10291927              NA
+## 2                  NA        554422547     449.0525 10258007              NA
+## 3                  NA        623197344     464.6200 10145005              NA
+## 4                  NA        541163568     450.8029 10028574        12454711
+## 5                  NA        618011522     463.1870  9893038              NA
+##    co2_PC pm2.5_35 battleDeaths
+## 1 7.54391 89.78011           NA
+## 2 7.55721 91.68630           NA
+## 3 7.39852 86.66061            5
+## 4 7.42475 92.01600           NA
+## 5 7.17581 81.11849           NA</code></pre>
+<div id="this-isnt-it.-fix-it.-idk-how-to-plot-evidently.-i-swear-im-trying" class="section level3">
+<h3>This isn’t it. fix it. idk how to plot evidently. i swear i’m
+trying</h3>
+<ol start="3" style="list-style-type: decimal">
 <li><p>(5pt) Now let’s analyze the CO2 emissions per capita (co2_PC ).
-Make a similar plot of the same countries. What does this figure
+Make a similar plot of then same countries. What does this figure
 suggest?</p></li>
 <li><p>(6pt) Compute average CO2 emissions per capita across the
 continents (assume region is the same as continent). Comment what do you
 see. Note: just compute averages over countries and ignore the fact that
 countries are of different size. Hint: Americas 2016 should be
 4.80.</p></li>
-<li><p>(7pt) Make a barplot where you show the previous results–average
-CO2 emissions per capita across continents in 1960 and 2016.</p></li>
-<li><p>Which countries are the three largest, and three smallest CO2
-emitters (in terms of CO2 per capita) in 2019 for each continent?
-(Assume region is continent).</p></li>
 </ol>
+<pre class="r"><code>gapminder %&gt;% 
+  group_by(region) %&gt;% 
+  filter(!is.na(co2_PC)) %&gt;% 
+  summarize(mean(co2_PC))</code></pre>
+<pre><code>## # A tibble: 6 × 2
+##   region     `mean(co2_PC)`
+##   &lt;chr&gt;               &lt;dbl&gt;
+## 1 &quot;&quot;                 16.2  
+## 2 &quot;Africa&quot;            0.930
+## 3 &quot;Americas&quot;          6.46 
+## 4 &quot;Asia&quot;              6.21 
+## 5 &quot;Europe&quot;            7.95 
+## 6 &quot;Oceania&quot;           4.39</code></pre>
+<ol start="5" style="list-style-type: decimal">
+<li>(7pt) Make a barplot where you show the previous results–average CO2
+emissions per capita across continents in 1960 and 2016.</li>
+</ol>
+<pre class="r"><code>co2pc_1960 &lt;- gapminder %&gt;%
+  filter(time==1960) %&gt;% 
+  group_by(region) %&gt;% 
+  filter(!is.na(co2_PC)) %&gt;% 
+  summarize(mean(co2_PC))</code></pre>
+<pre class="r"><code>co2pc_2016 &lt;- gapminder %&gt;%
+  filter(time==2016) %&gt;% 
+  group_by(region) %&gt;% 
+  filter(!is.na(co2_PC)) %&gt;% 
+  summarize(mean(co2_PC))</code></pre>
+<p>fix<code>{r} ggplot(co2pc_2016) +   geom_col(x=region, y=co2pc_2016) this</code></p>
+</div>
+<div id="this-isnt-it.-fix-it." class="section level3">
+<h3>This isn’t it. Fix it.</h3>
+<ol start="6" style="list-style-type: decimal">
+<li>Which countries are the three largest, and three smallest CO2
+emitters (in terms of CO2 per capita) in 2019 for each continent?
+(Assume region is continent).</li>
+</ol>
+<pre class="r"><code>gapminder %&gt;%
+  select(time, region, name, co2_PC) %&gt;%
+  filter(time== 2016, !is.na(region)) %&gt;%
+  arrange(desc(co2_PC)) %&gt;% 
+  head(3)</code></pre>
+<pre><code>##   time   region                name   co2_PC
+## 1 2016     Asia               Qatar 38.90147
+## 2 2016                              33.76146
+## 3 2016 Americas Trinidad and Tobago 31.84485</code></pre>
+<pre class="r"><code>gapminder %&gt;%
+  select(time, region, name, co2_PC) %&gt;%
+  filter(time== 2016, !is.na(co2_PC)) %&gt;%
+  arrange(desc(co2_PC)) %&gt;% 
+  tail(3)</code></pre>
+<pre><code>##     time region                              name  co2_PC
+## 202 2016 Africa                           Burundi 0.04720
+## 203 2016 Africa                           Somalia 0.04550
+## 204 2016 Africa Congo, Democratic Republic of the 0.02564</code></pre>
+<ul>
+<li>Top 3 are Qatar, Unknown, and Trinidad and Tobego</li>
+<li>Bottom 3 are Burundi, Somalia, and Democratic Republic of the
+Congo</li>
+</ul>
+</div>
 </div>
 <div id="gdp-per-capita-50pt" class="section level1">
 <h1>GDP per capita (50pt)</h1>
@@ -527,8 +691,9 @@ rank()! Hint2: 17 for 1960.</p></li>
 has been falling quite a bit. But we also have more countries in
 2019–what about the relative rank divided by the corresponding number of
 countries that have LE data in the corresponding year? Hint: 0.0904 for
-1960. Finally tell us how many hours did you spend on this PS.</p></li>
+1960.</p></li>
 </ol>
+<p>Finally tell us how many hours did you spend on this PS.</p>
 </div>
 
 
