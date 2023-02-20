@@ -5,36 +5,93 @@ date: "2023-02-18"
 output: html_document
 ---
 # Load and check data (5pt)
-
-1. You first task is to do a very simple data check:
- (1pt) For solving the problems, and answering the questions, create a new rmarkdown docu-
-ment with an appropriate title. See https://faculty.washington.edu/otoomet/info201-book/
-r-markdown.html#r-markdown-rstudio-creating.
-
+Your first task is to do a very simple data check: 
+1. (1pt) Create an rmarkdown file
+_Note:_ This is that file
+```{r, message=FALSE}
+library(tidyverse)
+```
 
 2. (2pt) Load data. How many rows/columns do we have?
+```{r}
+gapminder <- read.delim("data/gapminder.csv.bz2")
+dim(gapminder)
+```
 
 
 3. (2pt) Print a small sample of data. Does it look OK?
-
+```{r}
+gapminder %>% 
+  sample_n(5)
+```
+There are many blanks/NAs, but this makes sense with the information being considered. The data frame itself looks good and is properly formatted.In the knitted version it appears more difficult to read, however that seems to be due to the number of vectors and limits on page size. All of the information is still included in the way it should be.
 
 # Descriptive statistics (15pt)
 
 1. (3pt) How many countries are there in the dataset? Analyze all three: iso3, iso2 and name.
+```{r}
+iso3uniq <- n_distinct(gapminder$iso3)
+iso2uniq <- n_distinct(gapminder$iso2)
+nameuniq <- n_distinct(gapminder$name)
+
+gapminder %>% 
+  summarize(iso3uniq=n_distinct(iso3), iso2uniq=n_distinct(iso2), nameuniq=n_distinct(name))
+```
 
 
 2. If you did this correctly, you saw that there are more names than iso-2 codes, and there are
 even more iso3 -codes. What is going on? Can you find it out?
+    _This doesn't seem accurate. I saw a note in the discord saying this question had a mistake_
 (a) (5pt) Find how many names are there for each iso-2 code. Are there any iso-2 codes that
 correspond to more than one name? What are these countries?
+_Note:_ Here I'm comparing just _iso2_ and _name_
+```{r}
+gapminder %>% 
+  group_by(iso2, name) %>% 
+  filter(!is.na(iso2)) %>% 
+  summarize(n_distinct(name), n()) %>% 
+  arrange(desc(n()))
+```
+
+This table shows the name and its correlated iso2-code, as well as the number of distinct names in that section (should be 1; appears to be 1 on each) and number of occurrences of that name. An example is Andorra. Its code is "AD", there is only one name included ("Andorra"), and it occurs 60 times within the data frame.
 
 (b) (5pt) Now repeat the same for name and iso3-code. Are there country names that have
 more than one iso3-code? What are these countries?
-Hint: two of these entitites are CHANISL and NLD CURACAO.
+Hint: two of these entities are CHANISL and NLD CURACAO.
+_Note:_ this one compares **_iso3_** and _name_
+```{r}
+gapminder %>% 
+  group_by(iso3, name) %>% 
+  summarize(n_distinct(name), n()) %>% 
+  arrange(desc(n()))
+```
+```{r}
+gapminder %>% 
+  summarize(sum(is.na(name)))
+```
 
 
 3. (2pt) What is the minimum and maximum year in these data?
 
+_Note:_ in this data frame, year is shown in vector _time_
+
+```{r}
+#min year
+gapminder %>% 
+  arrange(time) %>% 
+  select(time) %>% 
+  head(1)
+```
+```{r}
+#max year
+gapminder %>% 
+  filter(!is.na(time)) %>% 
+  arrange(time) %>% 
+  select(time) %>% 
+  tail(1)
+```
+
+In the data, the minimum year is 1960, and the maximum year is 2019. This means that the data frame includes information of years 1960 through 2019.
 
 # CO2 emissions (30pt)
 
